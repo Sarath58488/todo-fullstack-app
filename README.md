@@ -13,6 +13,8 @@ The project demonstrates basic CRUD operations and frontend–backend integratio
 - View all todos
 - Update todo status (Pending / Completed)
 - Delete a todo
+- Filter todos by status (All / Pending / Completed)
+
 
 ## Setup Instructions
 

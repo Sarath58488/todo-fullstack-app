@@ -9,6 +9,10 @@ function App() {
     fetchTodos();
   }, []);
 
+  // ======================
+  // BASIC API FUNCTIONS
+  // ======================
+
   const fetchTodos = () => {
     fetch("http://localhost:5000/api/todos")
       .then(res => res.json())
@@ -27,47 +31,52 @@ function App() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ title, description })
-    })
-      .then(res => res.json())
-      .then(() => {
-        setTitle("");
-        setDescription("");
-        fetchTodos();
-      });
+    }).then(() => {
+      setTitle("");
+      setDescription("");
+      fetchTodos();
+    });
   };
 
-  // ✅ DELETE TODO (INSIDE App)
   const deleteTodo = (id) => {
     fetch(`http://localhost:5000/api/todos/${id}`, {
       method: "DELETE"
-    })
-      .then(() => fetchTodos());
+    }).then(() => fetchTodos());
   };
+
   const toggleStatus = (todo) => {
-  fetch(`http://localhost:5000/api/todos/${todo.id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      status: todo.status === "Pending" ? "Completed" : "Pending"
-    })
-  })
-    .then(() => fetchTodos());
-};
+    fetch(`http://localhost:5000/api/todos/${todo.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        status: todo.status === "Pending" ? "Completed" : "Pending"
+      })
+    }).then(() => fetchTodos());
+  };
 
-    const filterTodos = (status) => {
-  fetch("http://localhost:5000/api/todos")
-    .then(res => res.json())
-    .then(data => {
-      const filtered = data.filter(todo => todo.status === status);
-      setTodos(filtered);
-    });
-};
-
+  // ======================
+  // ⭐ OPTIONAL STEP 2
+  // FILTER TODOS BY STATUS
+  // ======================
+  const filterTodos = (status) => {
+    fetch("http://localhost:5000/api/todos")
+      .then(res => res.json())
+      .then(data => {
+        const filtered = data.filter(todo => todo.status === status);
+        setTodos(filtered);
+      });
+  };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{
+      maxWidth: "500px",
+      margin: "40px auto",
+      padding: "20px",
+      border: "1px solid #ddd",
+      borderRadius: "8px"
+    }}>
       <h2>Todo List</h2>
 
       <input
@@ -92,24 +101,25 @@ function App() {
 
       <hr />
 
+      {/* ======================
+          ⭐ OPTIONAL STEP 1
+          FILTER BUTTONS UI
+         ====================== */}
+      <div style={{ marginBottom: "10px" }}>
+        <button onClick={fetchTodos}>All</button>{" "}
+        <button onClick={() => filterTodos("Pending")}>Pending</button>{" "}
+        <button onClick={() => filterTodos("Completed")}>Completed</button>
+      </div>
+
       {todos.length === 0 && <p>No todos found</p>}
-
-      <button onClick={() => fetchTodos()}>All</button>
-<button onClick={() => filterTodos("Pending")}>Pending</button>
-<button onClick={() => filterTodos("Completed")}>Completed</button>
-
-<br /><br />
 
       <ul>
         {todos.map(todo => (
           <li key={todo.id}>
-           <strong>{todo.title}</strong> – {todo.status}
-{" "}
-<button onClick={() => toggleStatus(todo)}>
-  {todo.status === "Pending" ? "Complete" : "Pending"}
-</button>
-
-            {" "}
+            <strong>{todo.title}</strong> – {todo.status}{" "}
+            <button onClick={() => toggleStatus(todo)}>
+              {todo.status === "Pending" ? "Complete" : "Pending"}
+            </button>{" "}
             <button onClick={() => deleteTodo(todo.id)}>Delete</button>
           </li>
         ))}
